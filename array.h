@@ -1,21 +1,34 @@
 #ifndef __ARRAY__
 #define __ARRAY__
+#include <malloc.h>
+
+// ########################################################
+//define, make variables get memory
 const int a = 5;
-int c = a; //neglect top const,top const赋值时被忽略,c仍然是一个变量
-constexpr int b = a; //a kind of constexpr expression  ,here it works as the keyword 'const' ,add top const feature
-//a kind of constexpr expression,only pass int literal can you view it as index of array
+//neglect top const,c -> variable int
+int c = a;
+//a kind of constexpr expression  ,here it works as the keyword 'const' ,add top const feature
+constexpr int b = a;
+//a kind of constexpr expression,only pass int literal or const/constexpr can you view it as index of array
 constexpr int integer(int num) { return num; }
 
-int arr[a]; // ok, because 'a' is const_value
-int arr2[b];
+// ########################################################
+int arr[a]; // ok, cosnt int
+int arr2[b]; //ok, constexpr int
 int arr3['v']; //ok,because char -> int
+int arr4[integer(5)]; //ok, constexpr
 
-// int arr4[4.3];//error,double cannot convert to int
-// int arr3[c];  //error,because 'b' is not const_value or a int/char literal
+// int arr5[4.3];//error,double cannot convert to int
+// int arr6[c];  //error,not a const value
+
+// ########################################################
+//
 int assignment(int i)
 {
     int* arr = new int[i];
-    //int* ptr = (int*)malloc(sizeof(int) * i);
-    // new 相比malloc 会自动调用constructor 而且malloc需要头文件的支持 new 内部是基于malloc,new 可以使用malloc重载
+    // 1.'new' compare to 'malloc' constructor will be called
+    // 2.'malloc'need <malloc.h> actually. 'operator new' is based on 'malloc',which can be overloaded.
+    int* ptr = (int*)malloc(sizeof(int) * i);
 }
+// ########################################################
 #endif
