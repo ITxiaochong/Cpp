@@ -1,8 +1,10 @@
 #ifndef __ARRAY__
 #define __ARRAY__
 const int a = 5;
-constexpr int b = a;
-int c = a;
+int c = a; //neglect top const,top const赋值时被忽略,c仍然是一个变量
+constexpr int b = a; //a kind of constexpr expression  ,here it works as the keyword 'const' ,add top const feature
+//a kind of constexpr expression,only pass int literal can you view it as index of array
+constexpr int integer(int num) { return num; }
 
 int arr[a]; // ok, because 'a' is const_value
 int arr2[b];
