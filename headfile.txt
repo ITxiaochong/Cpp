@@ -1,0 +1,16 @@
+#ifndef __HEADFILENAME__
+#define __HEADFILENAME__
+
+...
+#endif
+
+when your C++ source file have to include your own headfile.
+--you have to use "xx.h" like "./headfile/bubleSort.h" or "headfile/bubleSort.h"
+--as you can see, './' can be left out
+
+when your C++ source file have to include STL headfile
+--you should better use ' <> ' instead of ' "" '
+
+when your C++ source file have to include previous headfile of C
+-- you should add 'c' before the name of previous headfile
+
