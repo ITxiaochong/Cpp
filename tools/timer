@@ -1,0 +1,41 @@
+#ifndef __TIMER__MYSELF__
+#define __TIMER__MYSELF__
+#define N_MAX_SIZE 100
+#include <iostream>
+#include <malloc.h>
+#include <windows.h>
+LARGE_INTEGER TIMER_HZ__; //8 Byte
+LARGE_INTEGER TIMER_BEGIN__;
+LARGE_INTEGER TIMER_END__;
+int* signatures = (int*)calloc(N_MAX_SIZE, sizeof(int));
+
+/**
+ * signature:           a integer in [1,100] 
+ * returnVal:-1         fail to alloc memery
+ * returnVal: 0         successfully
+ */
+ 
+int timer(int signature)
+{
+    if (signatures && signature > N_MAX_SIZE)
+        signatures = (int*)realloc(signatures, sizeof(int) * (signature + 1));
+    else if (!signatures) {
+        signatures = (int*)calloc(N_MAX_SIZE, sizeof(int));
+        if (!signatures)
+            return -1;
+    }
+    if (signatures[signature] == 1)
+        return -1;
+    signatures[signature] = 1;
+    QueryPerformanceFrequency(&TIMER_HZ__);     //tick frequency(number per second)
+    QueryPerformanceCounter(&TIMER_BEGIN__);    //The number of ticks from power on to the present
+    return 0;
+}
+void timerEnd(int signature)
+{
+    if (signatures[signature] == 1) {
+        QueryPerformanceCounter(&TIMER_END__); //The number of ticks from power on to the present
+        std::cout << 1000 * (double)(TIMER_END__.QuadPart - TIMER_BEGIN__.QuadPart) / (double)TIMER_HZ__.QuadPart << " ms" << std::endl;
+    }
+}
+#endif  //__TIMER__MYSELF__
