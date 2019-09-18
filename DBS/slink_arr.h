@@ -12,50 +12,53 @@ struct arr { //stalink node
     ElementType el;
     pos cur; //cursor
 };
+enum Flag {
+    HEAD,
+    COUNT,
+    END
+};
 typedef struct arr stalink[MAXSIZE];
 class slink {
 public:
-    slink()
+    slink(int val = MAXSIZE)
         : length(0)
-        , size(MAXSIZE)
+        , size(val + 2)
         , boundary_value(BOUNDARY_VALUE)
     {
         initialization(S);
     }
-    slink(const slink& space)
-        : size(MAXSIZE)
-        , boundary_value(BOUNDARY_VALUE)
+    slink(slink& space)
+        : boundary_value(BOUNDARY_VALUE)
     {
-        copy(space);
+        copy(this, space);
     }
     //options
     pos allocnode();
     bool freenode(pos);
     //default delete the first match,if second param == true,delete all matches.
+    pos find(ElementType, Flag) const; //Logically returned subscripts
     bool remove(ElementType, bool);
     bool insert(ElementType, pos, bool);
-    pos find(ElementType);
+    pos findIndex(ElementType) const; //actual subscripts
     bool updateByIndex(ElementType, pos);
-    bool findMin(ElementType*);
-    bool findMax(ElementType*);
-    void list();
+    ElementType findMin() const;
+    ElementType findMax() const;
+    void list() const;
     //operator overload
     ElementType& operator[](int i)
     {
         //out of boundary or slink not exists
         if (0 == length || i > length - 1 || i < 0)
             return boundary_value;
-        pos ptr = S[1].cur;
-        while (--i && ptr) {
+        pos ptr = S[1].cur; //first datanode slink[0]
+        while (i-- && ptr) {
             ptr = S[ptr].cur;
         }
-        if (0 == i)
-            return S[ptr].el;
-        return boundary_value;
+        return S[ptr].el; //optimistically return
     }
-    const slink& operator=(slink& link)
+    const slink& operator=(const slink& link)
     {
-        copy(link);
+        copy(this, link);
         return *this;
     }
     int getLen() const
@@ -75,18 +78,24 @@ private:
     ElementType boundary_value;
     void initialization(stalink space)
     {
-        for (int i = 1; i < MAXSIZE - 1; ++i)
+        for (int i = 2; i < size - 1; ++i)
             space[i].cur = i + 1;
+        //if space[1].cur = 1 ==> space be a circular linked list
+        space[1].cur = 0; //default not a circular linked list
         space[0].cur = 2;
-        space[MAXSIZE - 1].cur = 0;
+        space[size - 1].cur = 0;
     }
-    void copy(const slink& space)
+    void copy(slink* ths, const slink& space)
     {
+        ths->length = space.length;
+        ths->size = space.size;
         int i = 0;
-        while (i < MAXSIZE) {
-            S[i++] = space.S[i]; //Aggregate class ,It means the same thing below.
+        while (i < ths->size) {
+            // S[i++] = space.S[i]; //Aggregate class ,It means the same thing below.
+            ths->S[i].el = space.S[i].el;
+            ths->S[i].cur = space.S[i].cur;
+            ++i;
         }
-        length = space.length;
     }
 };
 inline pos slink::allocnode()
@@ -111,7 +120,7 @@ inline bool slink::remove(ElementType e, bool flag = false)
         return false;
     pos pre = 1; //precursor of the first datanode
     pos ptr = S[1].cur; //get first datanode's ins
-    pos has = false;
+    bool has = false;
     if (flag) { //second param 'flag == true' ,function will remove all of matches
         while (ptr) {
             if (e == S[ptr].el) {
@@ -175,7 +184,41 @@ inline bool slink::insert(ElementType e, pos ins = -1, bool aORb = false)
     ++length; //record value of variable 'length' + 1
     return true; //successfully insert
 }
-inline pos slink::find(ElementType e)
+inline pos slink::find(ElementType e, Flag flag = HEAD) const
+{
+    if (0 == length)
+        return -1; //no element
+    pos ptr = S[1].cur, ins = -1; //first datanode
+    if (COUNT == flag) {
+        int count = 0;
+        while (ptr) {
+            ++ins;
+            if (e == S[ptr].el)
+                ++count; //count the nums of matches
+            ptr = S[ptr].cur;
+        }
+        return count;
+    } else if (HEAD == flag) {
+        while (ptr) {
+            ++ins; //first datanode slink[ins == 0]
+            if (e == S[ptr].el)
+                return ins;
+            ptr = S[ptr].cur;
+        }
+    } else {
+        int tmp = -1;
+        while (ptr) {
+            ++ins; //first datanode slink[ins == 0]
+            if (e == S[ptr].el)
+                tmp = ins;
+            ptr = S[ptr].cur;
+        }
+        return tmp;
+    }
+
+    return -1; //no match!
+}
+inline pos slink::findIndex(ElementType e) const
 {
     if (0 == length)
         return 0;
@@ -186,7 +229,7 @@ inline pos slink::find(ElementType e)
             flag = false; //shut down traversing and return pos
             return ptr;
         }
-        ++ptr;
+        ptr = S[ptr].cur;
     }
     return 0;
 }
@@ -200,37 +243,37 @@ inline bool slink::updateByIndex(ElementType e, pos ins)
     S[ins].el = e;
     return true;
 }
-inline bool slink::findMin(ElementType* e)
+inline ElementType slink::findMin() const
 {
     if (0 == length)
         return false;
     pos ptr = S[1].cur;
-    *e = S[ptr].el;
+    ElementType min = S[ptr].el;
     ptr = S[ptr].cur;
     while (ptr) {
-        if (*e > S[ptr].el) {
-            *e = S[ptr].el;
+        if (min > S[ptr].el) {
+            min = S[ptr].el;
         }
         ptr = S[ptr].cur;
     }
-    return true;
+    return min;
 }
-inline bool slink::findMax(ElementType* e)
+inline ElementType slink::findMax() const
 {
     if (0 == length)
         return false;
     pos ptr = S[1].cur;
-    *e = S[ptr].el;
+    ElementType max = S[ptr].el;
     ptr = S[ptr].cur;
     while (ptr) {
-        if (*e < S[ptr].el) {
-            *e = S[ptr].el;
+        if (max < S[ptr].el) {
+            max = S[ptr].el;
         }
         ptr = S[ptr].cur;
     }
-    return true;
+    return max;
 }
-inline void slink::list()
+inline void slink::list() const
 {
     if (0 == length) {
         std::cout << "[" << ']' << std::endl;

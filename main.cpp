@@ -6,18 +6,18 @@ using namespace std;
 using namespace room2;
 int main()
 {
-    timer(0);
-    timer(1);
-    slink slink;
-    int i = 0;
-    while (++i < 102) {
-        slink.insert(i);
-    }
-    // cout << slink.getLen() << endl;
-    // slink.remove(7, true);
-    timerEnd(1);
-    timer(2);
-    slink.list();
-    timerEnd(2);
-    timerEnd(0);
+    slink slink1(10);
+    slink slink3(5);
+    for (int i = 0; i < 5; i++)
+        slink1.insert(i);
+    slink slink2(slink1);
+    // cout << slink2[0] << endl;
+    slink1.remove(1);
+    slink1.insert(1, 1);
+    slink1.list();
+    // cout << slink[2] << endl;
+    // cout << slink.find(2, HEAD) << endl;
+    // cout << slink.findMin() << endl;
+    // cout << slink.findMax() << endl;
+    // cout << slink.findMax() << endl;
 }
