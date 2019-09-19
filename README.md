@@ -40,7 +40,7 @@ usage--
       |--- string.cpp     //syntax in string
       |--- for_circle.cpp //how operator'++' works?
 (ElementType == int)      
-BDS  --                 //basic data structure and some related operations 
+DBS  --                 //basic data structure and some related operations 
       |--slink.h
       |--dlink.h
       |--link_arr.h     //static linked list implemented with array.
@@ -58,7 +58,7 @@ BDS  --                 //basic data structure and some related operations
       |--graph_arr.h    //graph implements with array
 
 (ElementType == generic)
-ADS  --                 //advanced data structure and some related operations
+DBD  --                 //advanced data structure and some related operations
       |--...            
 main.cpp                //to test code , you don't have to download it
 ```
