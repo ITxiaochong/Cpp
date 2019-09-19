@@ -91,9 +91,7 @@ private:
         ths->size = space.size;
         int i = 0;
         while (i < ths->size) {
-            // S[i++] = space.S[i]; //Aggregate class ,It means the same thing below.
-            ths->S[i].el = space.S[i].el;
-            ths->S[i].cur = space.S[i].cur;
+            ths->S[i] = space.S[i]; //Aggregate class ,It means the same thing below.
             ++i;
         }
     }
