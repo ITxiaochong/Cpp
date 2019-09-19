@@ -29,8 +29,7 @@ public:
     int getLen(); //num of nodes in slink
     ElementType* getMin(); //min_value
     ElementType* getMax(); //max_value
-    ElementType* getSum(); //summery
-    int getMid(); //mid_value
+    long long getSum(); //summery
     int getMean(); //mean value
     int unshift(); //insert node in the head
     ElementType shift(); //delete node in the head and return it's value
@@ -39,7 +38,6 @@ public:
     int insertNode(ElementType);
     int deleteNode(ElementType, int);
     void list();
-    void sort();
 
 private:
     LENGTH length;
@@ -86,22 +84,31 @@ inline ElementType* slink::getMax()
     }
     return &ins->el;
 }
-inline ElementType* slink::getSum()
-{
-    return nullptr;
-}
-inline int slink::getMid()
+inline long long slink::getSum()
 {
     if (1 == length)
         return 0;
-}
-inline void slink::sort()
-{
+    auto current = head->next; //point to first datanode
+    long long sum = 0;
+    while (current) {
+        sum += current->el;
+        current = current->next;
+    }
+    return sum;
 }
 inline int slink::insertNode(ElementType e)
 {
-    //sort  need ohead
-    return 0;
+    //sort need ohead
+    if (1 == length)
+        return false;
+    auto ptr = head;
+    while (ptr->next) {
+        ptr = ptr->next;
+    }
+    successor newNode = new node(e);
+    ptr->next = newNode;
+    ++length;
+    return 1;
 }
 }
 
